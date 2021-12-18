@@ -1,0 +1,15 @@
+title 0.5 single page app
+
+note over browser:
+SPA websites fetch one HTML 
+page from the server and
+manipulates content with
+client side Javascript
+end note
+
+browser->server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/new_note_spa
+server-->browser: HTML code
+browser-->server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/main.css
+server-->browser: main.css
+browser-->server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/spa.js
+server-->browser: spa.js
