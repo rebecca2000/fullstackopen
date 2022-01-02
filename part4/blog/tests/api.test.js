@@ -20,6 +20,14 @@ test('all notes are returned', async () => {
     expect(response.body).toHaveLength(testTools.manyBlogs.length)
   }, 10000)
 
+test('blog unique identifier is "ID"', async() => {
+    const response = await api.get('/api/blogs')
+    
+    for (let blog of response.body) {
+        console.log('response.body element: ', blog)
+        expect(blog.id).toBeDefined()
+    }
+})
 
 afterAll(() => {
     mongoose.connection.close()
