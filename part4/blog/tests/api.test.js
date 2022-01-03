@@ -56,6 +56,26 @@ test('POST request blog.likes defaults to 0 if undefined', async() => {
     expect(savedBlog.likes).toBe(0)
 })
 
+test('POST request return 400 if title and/or url are missing', async() => {
+    await api.post('/api/blogs')
+            .send({
+                author: 'Shakespeare',
+                url: 'www.shakespeare.com'
+            })
+            .expect(400)
+
+    await api.post('/api/blogs')
+            .send({
+                title: 'The Tempest',
+                author: 'Shakespeare'
+            })
+            .expect(400)
+
+    await api.post('/api/blogs')
+            .send({})
+            .expect(400)
+})
+
 afterAll(() => {
     mongoose.connection.close()
 })
