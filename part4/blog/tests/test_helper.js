@@ -60,7 +60,15 @@ const manyBlogs = [
     }  
 ]
 
+const blogObj = {
+    title: 'The Tempest',
+    author: 'Shakespeare',
+    url: 'www.shakespeare.com',
+    likes: 5
+}
+
 module.exports = {
     oneBlog,
-    manyBlogs
+    manyBlogs,
+    blogObj
 }
