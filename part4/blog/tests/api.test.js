@@ -30,16 +30,30 @@ test('blog unique identifier is "ID"', async() => {
 })
 
 test('POST request creates new blog post', async() => {
-    await new Blog({
-        'title': 'My blog',
-        'author': 'Shakespeare',
-        'url': 'www.blogs.com',
-        'likes': 10
-    }).save()
+    await api.post('/api/blogs')
+            .send({
+                title: 'The Tempest',
+                author: 'Shakespeare',
+                url: 'www.shakespeare.com',
+                likes: 5
+            })
     const response = await api.get('/api/blogs')
     expect(response.body).toHaveLength(testTools.manyBlogs.length+1)
     const titles = response.body.map(r => r.title)
-    expect(titles).toContain('My blog')
+    expect(titles).toContain('The Tempest')
+})
+
+test('POST request blog.likes defaults to 0 if undefined', async() => {
+    await api.post('/api/blogs')
+            .send({
+                title: 'The Tempest',
+                author: 'Shakespeare',
+                url: 'www.shakespeare.com'
+            })
+    const response = await api.get('/api/blogs')
+    const savedBlog = response.body.find(blog => blog.title === 'The Tempest')
+    expect(savedBlog.likes).toBeDefined()
+    expect(savedBlog.likes).toBe(0)
 })
 
 afterAll(() => {
