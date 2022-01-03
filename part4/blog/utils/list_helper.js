@@ -1,9 +1,3 @@
-
-
-const dummy = (blogs) => {
-    return 1
-}
-
 const totalLikes = (blogs) => {
     return blogs.reduce(function(prevBlog, curBlog) {
         return {
@@ -69,7 +63,6 @@ const mostLikes = (blogs) => {
 }
 
 module.exports = {
-    dummy,
     totalLikes,
     favouriteBlog,
     mostBlogs,
