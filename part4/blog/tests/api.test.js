@@ -15,7 +15,7 @@ beforeEach(async () => {
     await Promise.all(promiseArray)
 }, 10000)
 
-describe('when GETting blogs', () => {
+describe('GET request', () => {
     test('getAll: all blogs are returned', async () => {
         const response = await api.get(baseURL)
                                     .expect(200)
@@ -82,12 +82,11 @@ describe('POST request', () => {
 })
 
 describe('DELETE request', () => {
-    test('returns 204 on success', async() => {
+    test('deletes blog and returns 204 on success', async() => {
         const newBlog = await api.post(baseURL)
                                 .send(testTools.blogObj).expect(201)
         const blogs = await api.get(baseURL)
         expect(blogs.body).toHaveLength(testTools.manyBlogs.length+1)
-        console.log(newBlog.body)
         await api.delete(`${baseURL}/${newBlog.body.id}`)
                     .expect(204)
         const blogsAfterDelete = await api.get(baseURL)
@@ -97,6 +96,38 @@ describe('DELETE request', () => {
     test('returns 404 if blog does not exist', async() => {
         const fakeID = '111111111111111111111111'
         await api.delete(`${baseURL}/${fakeID}`)
+                    .expect(404)
+        const blogs = await api.get(baseURL)
+        expect(blogs.body).toHaveLength(testTools.manyBlogs.length)
+    })
+})
+
+describe('UPDATE request', () => {
+    test('updates blog and returns 204 on success', async() => {
+        const updatedBlog = {
+            id: "5a422a851b54a676234d17f7",
+            title: "React patterns",
+            author: "Michael Chan",
+            url: "https://reactpatterns.com/",
+            likes: 8,
+          }
+
+        const returnedBlog = await api.put(`${baseURL}/${updatedBlog.id}`).expect(200)
+                                .send(updatedBlog).expect(200)
+        expect(returnedBlog.body.id).toBe(updatedBlog.id)
+        expect(returnedBlog.body.title).toBe(updatedBlog.title)
+        expect(returnedBlog.body.author).toBe(updatedBlog.author)
+        expect(returnedBlog.body.url).toBe(updatedBlog.url)
+        expect(returnedBlog.body.likes).toBe(updatedBlog.likes)
+        
+        const allBlogs = await api.get(baseURL)
+        expect(allBlogs.body).toHaveLength(testTools.manyBlogs.length)
+        expect(allBlogs.body.map(b => b.title)).toContain(updatedBlog.title)
+    })
+
+    test('returns 404 if blog does not exist', async() => {
+        const fakeID = '111111111111111111111111'
+        await api.put(`${baseURL}/${fakeID}`)
                     .expect(404)
         const blogs = await api.get(baseURL)
         expect(blogs.body).toHaveLength(testTools.manyBlogs.length)

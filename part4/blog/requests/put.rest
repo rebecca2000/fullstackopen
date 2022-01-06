@@ -1,0 +1,9 @@
+PUT http://localhost:3003/api/blogs/5a422a851b54a676234d17f7
+content-type: application/json
+
+{
+  "title": "Marvel",
+  "author": "CC. Martin",
+  "url": "www.disney.com",
+  "likes": 100
+}
