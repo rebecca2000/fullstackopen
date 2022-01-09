@@ -152,16 +152,39 @@ describe('User requests', () => {
         expect(response.body).toHaveLength(testTools.manyUsers.length)
       }, 20000)
 
-    test('POST: user can be created', async () => {
+    test('POST: valid user can be created', async () => {
         await api.post(baseUserURL)
-        .send({
-            username: 'user2',
-            password: 'user2'
-        })
+            .send(testTools.userObj)
         const response = await api.get(baseUserURL)
         expect(response.body).toHaveLength(testTools.manyUsers.length+1)
         const usernames = response.body.map(r => r.username)
-        expect(usernames).toContain('user2')
+        expect(usernames).toContain(testTools.userObj.username)
+    })
+
+    test('POST: invalid user cannot be created', async () => {
+        // username too short (< 3 characters)
+        await api.post(baseUserURL)
+            .send({
+                username: 'ab',
+                password:'password'
+            })
+            .expect(400)
+
+        // password too short (< 3 characters)
+        await api.post(baseUserURL)
+            .send({
+                username: 'username',
+                password:'ab'
+            })
+            .expect(400)
+
+        // duplicate username
+        await api.post(baseUserURL)
+            .send(testTools.userObj)
+            .expect(200)
+        await api.post(baseUserURL)
+            .send(testTools.userObj)
+            .expect(400)        
     })
 })
 

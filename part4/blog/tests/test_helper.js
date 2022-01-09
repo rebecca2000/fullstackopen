@@ -80,9 +80,15 @@ const blogObj = {
     likes: 5
 }
 
+const userObj = {
+  username: 'user2',
+  password: 'user2'
+}
+
 module.exports = {
     oneBlog,
     manyBlogs,
     blogObj,
-    manyUsers
+    manyUsers,
+    userObj
 }
