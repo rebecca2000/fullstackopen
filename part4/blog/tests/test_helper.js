@@ -60,6 +60,19 @@ const manyBlogs = [
     }  
 ]
 
+const manyUsers = [
+  {
+    username: 'root',
+    name: 'root',
+    password: 'root'
+  },
+  {
+    username: 'user',
+    name: 'user',
+    password: 'user'
+  }
+]
+
 const blogObj = {
     title: 'The Tempest',
     author: 'Shakespeare',
@@ -70,5 +83,6 @@ const blogObj = {
 module.exports = {
     oneBlog,
     manyBlogs,
-    blogObj
+    blogObj,
+    manyUsers
 }
