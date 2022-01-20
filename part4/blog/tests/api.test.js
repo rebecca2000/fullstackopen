@@ -10,12 +10,12 @@ const bcrypt = require('bcrypt')
 const baseBlogURL = '/api/blogs'
 const baseUserURL = '/api/users'
 
-const login = async() => {
+const login = async(user) => {
     const response = await api
     .post('/api/login')
     .send({
-        'username': testTools.userObj.username,
-        'password': testTools.userObj.password
+        'username': user.username,
+        'password': user.password
     })
     .expect(200)
     return response.body.token
@@ -31,7 +31,7 @@ beforeEach(async () => {
     await User.deleteMany({})
     const user = new User({
         username: testTools.userObj.username, 
-        passwordHash: await bcrypt.hash(testTools.userObj.password, 10)
+        passwordHash: await bcrypt.hash(testTools.userObj.password, 1)
     })
     await user.save()
 }, 20000)
@@ -55,7 +55,7 @@ describe('GET blog request', () => {
 
 describe('POST blog request', () => {
     test('creates new blog post', async() => {
-        const token = await login()
+        const token = await login(testTools.userObj)
         await api.post(baseBlogURL)
             .send(testTools.blogObj)
             .auth(token, {type: 'bearer'})
@@ -73,7 +73,7 @@ describe('POST blog request', () => {
     })
 
     test('blog.likes defaults to 0 if undefined', async() => {
-        const token = await login()
+        const token = await login(testTools.userObj)
         await api.post(baseBlogURL)
                 .send({
                     title: 'The Tempest',
@@ -89,7 +89,7 @@ describe('POST blog request', () => {
     })
     
     test('returns 400 if title and/or url are missing', async() => {
-        const token = await login()
+        const token = await login(testTools.userObj)
         await api.post(baseBlogURL)
                 .send({
                     author: 'Shakespeare',
@@ -119,8 +119,8 @@ describe('DELETE request', () => {
             .expect(401)
     })
 
-    test('deletes blog and returns 200 on success', async() => {
-        const token = await login()
+    test('author can delete blog, returns 200 on success', async() => {
+        const token = await login(testTools.userObj)
         await api.post(baseBlogURL)
             .send(testTools.blogObj)
             .auth(token, {type: 'bearer'})
@@ -137,8 +137,33 @@ describe('DELETE request', () => {
         expect(user.blogs.map(b => String(b))).not.toContain(response.body.id)
     })
 
+    test('user that is not author cannot delete blog', async() => {
+        const token = await login(testTools.userObj)
+        await api.post(baseBlogURL)
+            .send(testTools.blogObj)
+            .auth(token, {type: 'bearer'})
+            .expect(201)
+
+        const newUser = {
+            username: 'newUser', 
+            password: 'password'
+        }
+        await new User({
+            username: newUser.username,
+            passwordHash: await bcrypt.hash(newUser.password, 1)
+        }).save()
+
+        const token2 = await login({
+            username: newUser.username,
+            password: newUser.password
+        })
+        await api.delete(`${baseBlogURL}/${testTools.blogObj._id}`)
+            .auth(token2, {type: 'bearer'})
+            .expect(403)
+    })
+
     test('returns 404 if blog does not exist', async() => {
-        const token = await login()
+        const token = await login(testTools.userObj)
         const fakeID = '111111111111111111111111'
         await api.delete(`${baseBlogURL}/${fakeID}`)
                     .auth(token, {type: 'bearer'})
@@ -155,7 +180,7 @@ describe('UPDATE request', () => {
     })
 
     test('updates blog and returns 200 on success', async() => {
-        const token = await login()
+        const token = await login(testTools.userObj)
         const updatedBlog = {...testTools.manyBlogs[0]}
         updatedBlog.likes+1
         const returnedBlog = await api.put(`${baseBlogURL}/${updatedBlog._id}`)
@@ -174,7 +199,7 @@ describe('UPDATE request', () => {
     })
 
     test('returns 404 if blog does not exist', async() => {
-        const token = await login()
+        const token = await login(testTools.userObj)
         const fakeID = '111111111111111111111111'
         await api.put(`${baseBlogURL}/${fakeID}`)
                     .auth(token, {type: 'bearer'})
