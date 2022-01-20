@@ -1,8 +1,9 @@
 POST http://localhost:3003/api/blogs 
 content-type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIiLCJpZCI6IjYxZGEyZDM0Yzk2ZWYxNTJmMDE3NTZjMiIsImlhdCI6MTY0MjEwNTQ0OSwiZXhwIjoxNjQyMTA5MDQ5fQ.nZP16JKV37O7FnXIpB3W7TawYnDm4oFhGqpKgnJ9hf0
 
 {
-  "title": "My 4th blog",
+  "title": "A Midsummer Night's Dream",
   "author": "Shakespeare",
   "url": "www.blogs.com",
   "likes": 10

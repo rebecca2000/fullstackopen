@@ -1,3 +1,5 @@
+const User = require('../models/user')
+
 const oneBlog = [
     {
         _id: '5a422aa71b54a676234d17f8',
@@ -74,10 +76,12 @@ const manyUsers = [
 ]
 
 const blogObj = {
+    _id: "5a422bc61b54a676234d17fd",
     title: 'The Tempest',
     author: 'Shakespeare',
     url: 'www.shakespeare.com',
-    likes: 5
+    likes: 5,
+    __v: 0
 }
 
 const userObj = {
@@ -85,10 +89,16 @@ const userObj = {
   password: 'user2'
 }
 
+const usersInDb = async () => {
+  const users = await User.find({})
+  return users.map(u => u.toJSON())
+}
+
 module.exports = {
     oneBlog,
     manyBlogs,
     blogObj,
     manyUsers,
-    userObj
+    userObj,
+    usersInDb
 }

@@ -27,7 +27,6 @@ const mostBlogs = (blogs) => {
         }
 
     })
-    console.log(blogsPublished)
     let topAuthor = {author: '', blogs: 0}
     for (const [key, val] of blogsPublished.entries()) {
         if (val > topAuthor.blogs) {
@@ -51,7 +50,6 @@ const mostLikes = (blogs) => {
         }
 
     })
-    console.log(blogsPublished)
     let topAuthor = {author: '', likes: 0}
     for (const [key, val] of blogsPublished.entries()) {
         if (val > topAuthor.likes) {
