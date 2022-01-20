@@ -3,23 +3,16 @@ const Blog = require('../models/blog')
 const User = require('../models/user')
 const jwt = require('jsonwebtoken')
 
-const getDecodedToken = request => {
-  let token
-  const authorization = request.get('authorization')
-  if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
-    token = authorization.substring(7)
-    return jwt.verify(token, process.env.SECRET)
-  }
-  return null
-}
-
 blogsRouter.get('/', async(request, response) => {
   const blogs = await Blog.find({}).populate('user', { username: 1, name: 1, id: 1 })
   response.json(blogs)
   })
   
 blogsRouter.post('/', async(request, response) => {
-  const decodedToken = getDecodedToken(request)
+  if (!request.token) {
+    return response.status(401).json({ error: 'token missing or invalid' })
+  }
+  const decodedToken = jwt.verify(request.token, process.env.SECRET)
   if (!decodedToken || !decodedToken.id) {
     return response.status(401).json({ error: 'token missing or invalid' })
   }
@@ -36,7 +29,10 @@ blogsRouter.post('/', async(request, response) => {
 })
 
 blogsRouter.delete('/:id', async(request, response) => {
-  const decodedToken = getDecodedToken(request)
+  if (!request.token) {
+    return response.status(401).json({ error: 'token missing or invalid' })
+  }
+  const decodedToken = jwt.verify(request.token, process.env.SECRET)
   if (!decodedToken || !decodedToken.id) {
     return response.status(401).json({ error: 'token missing or invalid' })
   }
@@ -52,7 +48,10 @@ blogsRouter.delete('/:id', async(request, response) => {
 })
 
 blogsRouter.put('/:id', async(request, response) => {
-  const decodedToken = getDecodedToken(request)
+  if (!request.token) {
+    return response.status(401).json({ error: 'token missing or invalid' })
+  }
+  const decodedToken = jwt.verify(request.token, process.env.SECRET)
   if (!decodedToken || !decodedToken.id) {
     return response.status(401).json({ error: 'token missing or invalid' })
   }
